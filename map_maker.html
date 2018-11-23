@@ -201,7 +201,7 @@ display: none;
       .enter()
       .append('option')
       .attr("class", function(d,i){return})
-      .attr("value", function(d,i){return [["geogLA2017UK", "geogLA2017GB", "LSOA","MSOA", "geogUKregion", "geogGBregion"][i]]})
+      .attr("value", function(d,i){return [["geogLA2017GB", "geogLA2017UK", "LSOA","MSOA", "geogUKregion", "geogGBregion"][i]]})
       // .property("selected", function(d, i) {return i===1;})
       .text(function(d,i){return ["1. Local Authority (GB)", "2. Local Authority (UK)","3. LSOA", "4. MSOA", "5. Regions (UK)", "6. Regions (GB)"][i]});
 
