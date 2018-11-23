@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href='css/mapbox-gl.css' rel='stylesheet' />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link rel="stylesheet" href="css/chosen.css">
+  <title>Map Maker</title>
+  <style>
+
+    input{
+  width:50px;
+}
+
+body {
+margin:0;
+padding:0;
+font-family: Avenir, 'Helvetica Neue', 'Lato', 'Segoe UI', Helvetica, Arial, sans-serif;
+max-width:800px;
+margin: 0px auto;
+display:block;
+height:800px;
+}
+
+#header{
+height:70px;
+width:100%
+}
+
+.mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
+display: none;
+}
+.databox{
+  height:550px;
+  padding-bottom: 100px;
+  display: block;
+}
+
+@media (min-width: 599px) {
+#map {
+  position: relative;
+  height: 600px;
+  width: 100%;
+}
+
+#selectNav {
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:30%;
+  height:40px;
+  /* background-color:rgba(255,255,255,0.8); */
+  z-index:1;
+}
+
+#keydiv {
+  position:absolute;
+  top:40px;
+  left:0px;
+  width:30%;
+  height:80px;
+  /* background-color:rgba(255,255,255,0.8); */
+  z-index:1;
+}
+
+#currVal {
+  font-size:14px;
+
+}
+}
+
+@media (max-width: 600px) {
+
+ body {
+  height: 620px;
+}
+
+  #map {
+  position:relative;
+  top:0px;
+  margin-top:120px;
+  height: 500px;
+  width: 100%;
+  overflow:visible;
+}
+
+#selectNav {
+  position:absolute;
+  top:-120px;
+  left:0px;
+  width:100%;
+  height:40px;
+  background-color:rgba(255,255,255,0.8);
+  z-index:3;
+}
+
+#keydiv {
+  position:absolute;
+  top:-80px;
+  left:0px;
+  width:100%;
+  height:80px;
+  background-color:rgba(255,255,255,0.8);
+  z-index:1;
+}
+
+#currVal {
+  font-size:14px;
+
+}
+
+.mapboxgl-ctrl-fullscreen {
+  display:none !important;
+}
+}
+
+#dropdownn {
+  width: 304px;
+  height: 50px;
+  border-style: solid;
+  border-width: 2px;
+  font-size: 1em;
+  border-radius: 50px;
+  border-color: #0075A3;
+  padding: 0 16px 0 30px;
+  color: #0075A3;
+  background-color: #FFF;
+  font-family: Avenir, 'Helvetica Neue', 'Lato', 'Segoe UI', Helvetica, Arial, sans-serif;
+
+}
+.yourCSV {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.yourCSV + label {
+    color: #0075A3;
+    border: 2px solid currentColor;
+     border-radius: 5px;
+    padding: 10px;
+}
+
+.yourCSV:focus + label,
+.yourCSV.has-focus + label,
+.yourCSV + label:hover {
+    color: #722040;
+}
+#dropdownn:focus {
+  outline: 2px solid #FF9933 !important;
+  outline-offset: 0;
+}
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="databox">
+    <h1 style="color:#0075A3; font-weight:bold; margin-bottom:10px; padding-bottom:0px;">Map Maker Tool</h1>
+    <p>This tool will allow you to input a data set and choose the boundaries and it will produce a heatmap.</p>
+    <p style="padding-bottom: 20px">Your dataset will need to be organised like the following picture.<br><br> AREANM and AREACD are essential, your data column can be any word (It can't start with a number).</p>
+    <img style="padding-bottom: 40px" src="csv.png">
+
+<form>
+    <div style="padding-bottom: 40px" id="dropdown">
+</div>
+
+
+      <input id="yourCSV" class="yourCSV" name="yourCSV" type="file" accept=".csv" style="width:350px;"></input>
+        <label for="yourCSV">  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+      Choose a file...</label>
+
+    </form>
+    <!-- <button id="submit" onclick="showmap()">Submit</div> -->
+
+
+  </div>
+
+
+  <div id='map'>
+    <div id='keydiv'></div>
+    <div id='selectNav'></div>
+  </div>
+  <script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
+
+  <script>
+    d3.select("#dropdown")
+      .append("select")
+      .attr('id','dropdownn')
+      .attr('name', 'areapicker')
+      .selectAll("option")
+      .data(["geogLA2017UK", "geogLA2017GB", "LSOA","MSOA", "geogUKregion", "geogGBregion"])
+      .enter()
+      .append('option')
+      .attr("class", function(d,i){return})
+      .attr("value", function(d,i){return [["geogLA2017UK", "geogLA2017GB", "LSOA","MSOA", "geogUKregion", "geogGBregion"][i]]})
+      // .property("selected", function(d, i) {return i===1;})
+      .text(function(d,i){return ["1. Local Authority (UK)", "2. Local Authority (GB)","3. LSOA", "4. MSOA", "5. Regions (UK)", "6. Regions (GB)"][i]});
+
+      // var areaSelect = document.getElementById("dropdownn");
+      // areaSelect.addEventListener('change', function(){
+      //   console.log(areaText)
+      // })
+      // var areaText = areaSelect.options[areaSelect.selectedIndex].value;
+
+      // d3.select("#dropdownn").on("change", change)
+      // function change() {
+      //    var geog = this.options[this.selectedIndex].text
+      //    console.log(this.options[this.selectedIndex].text)
+      //    console.log(geog)
+      // }
+
+
+
+
+// console.log(areaText)
+  </script>
+  <script src="js/topojson.v2.min.js"></script>
+  <script src="js/simple-statistics.min.js"></script>
+  <script src="js/modernizr.min.js"></script>
+  <script src="js/d3-queue.min.js"></script>
+  <script src="js/colorbrewer.js"></script>
+  <script src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>
+  <script src="js/chosen.jquery.js"></script>
+  <script src="js/limit.js"></script>
+  <script src="https://cdn.ons.gov.uk/vendor/pym/0.4.2/pym.min.js"></script>
+
+  <script src='js/mapbox-gl.js'></script>
+  <script src='js/turf.min.js'></script>
+  <script src="js/script2.js"></script>
+</body>
+
+</html>
