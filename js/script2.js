@@ -1,10 +1,12 @@
+//dropdown for geography
+
 d3.select("#dropdownn").on("change", change)
 function change() {
 	 var geog = this.options[this.selectedIndex].value
 	 console.log(geog)
 
 
-
+//CSV selection function
 d3.select("#yourCSV")
 	.on("change", function() {
 		var file = d3.event.target.files[0];
@@ -45,7 +47,7 @@ if(Modernizr.webgl) {
 
 
 	function ready (error, data, config, geog){
-
+ d3.select("#loading").remove();
 		//Set up global variables
 		dvc = config.ons;
 		oldAREACD = "";
@@ -62,8 +64,9 @@ if(Modernizr.webgl) {
 
 		//set title of page
 		//Need to test that this shows up in GA
-		document.title = dvc.maptitle;
-
+		mapTitle = $("#mapname").val();
+		document.title = mapTitle;
+console.log($("#mapname").val())
 		//Fire design functions
 		selectlist(data);
 
@@ -599,6 +602,30 @@ if(Modernizr.webgl) {
 
 
 	};
+	//postcodes
+
+	function getCodes(myPC) {
+    var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
+    $.support.cors = true;
+    $.ajax({
+      type: "GET",
+      crossDomain: true,
+      dataType: "jsonp",
+      url: myURIstring,
+      error: function(xhr, ajaxOptions, thrownError) {},
+      success: function(data1) {
+        if (data1.status == 200) {
+          var laCode = data1.result.codes.admin_district;
+          var laName = data1.result.admin_district;
+          drawGraphic(laCode, laName)
+        } else {
+          $("#pcText").val("Sorry, invalid postcode.");
+        }
+      }
+    });
+  }
+	//end of postcodes
+
 
 		function selectlist(datacsv) {
 

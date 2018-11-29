@@ -30,12 +30,55 @@ height:70px;
 width:100%
 }
 
+		#pcText {
+			width: 130px;
+			height:44px;
+			padding: 3px;
+			color: #999999;
+		}
+
+		.picaarticle {
+			font-size:18px;
+			line-height:24px;
+
+		}
+
+	.btn--full-width {
+		display: block;
+		width: 100%;
+	}
+
+	.btn--primary {
+		background-color: #0F8243;
+		color: #fff;
+	}
+
+	.btn {
+		font-family: "Open Sans",Helvetica,Arial,sans-serif;
+		font-weight: 400;
+		font-size: 14px;
+		display: inline-block;
+		width: auto;
+		cursor: pointer;
+		padding: 6px 16px 10px 16px;
+		border: 0 none;
+		text-align: center;
+		-webkit-appearance: none;
+		transition: background-color 0.25s ease-out;
+		text-decoration: none;
+		line-height: 24px;
+		height: 44px;
+		margin-top: -6px;
+		border-radius:0px;
+	}
+
+
 .mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
 display: none;
 }
 .databox{
-  height:550px;
-  padding-bottom: 100px;
+  height:500px;
+  padding-bottom: 10px;
   display: block;
 }
 
@@ -44,10 +87,12 @@ display: none;
   position: relative;
   height: 600px;
   width: 100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 #selectNav {
-  position:absolute;
+  position:relative;
   top:0px;
   left:0px;
   width:30%;
@@ -123,6 +168,8 @@ display: none;
   border-style: solid;
   border-width: 2px;
   font-size: 1em;
+  padding: 12px 20px;
+  margin: 8px 0;
   border-radius: 50px;
   border-color: #0075A3;
   padding: 0 16px 0 30px;
@@ -156,7 +203,19 @@ display: none;
   outline-offset: 0;
 }
 
-
+input[type=text]:focus{
+  border:2px solid #722040;
+}
+input[type=text]{
+  border:2px solid #0075A3;
+  border-radius: 5px;
+  width: 304px;
+  height:50px;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  font-size:17px;
+}
 
   </style>
 </head>
@@ -167,61 +226,194 @@ display: none;
     <h1 style="color:#0075A3; font-weight:bold; margin-bottom:10px; padding-bottom:0px;">Map Maker Tool</h1>
     <p>This tool will allow you to input a data set and choose the boundaries and it will produce a heatmap.</p>
     <p style="padding-bottom: 20px">Your dataset will need to be organised like the following picture.<br><br> AREANM and AREACD are essential, your data column can be any word (It can't start with a number).</p>
-    <img style="padding-bottom: 40px" src="csv.png">
+    <img style="padding-bottom: 10px" src="csv.png">
+  </div>
+  <hr>
 
-<form>
-    <div style="padding-bottom: 40px" id="dropdown">
+  <div>
+    <form>
+      <h2>Choose a geography and a file:</h2>
+      <div style="display:inline-block" id="dropdown"=>
+      </div>
+
+
+      <input id="yourCSV" class="yourCSV" name="yourCSV" type="file" accept=".csv"></input>
+      <label for="yourCSV"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17">
+          <path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path>
+        </svg>
+        Choose a file...</label>
+  </div>
+  </form>
+  </div>
+  <hr>
+  <div id="searchoptions">
+    <h2>Choose an area search option:</h2>
+    <div>
+      <input type="radio" id="Postcode" name="searchoption" value="Postcode" checked><label for "Postcode">Postcode</label>
+    </div>
+    <div>
+      <input type="radio" id="Areasearch" name="searchoption" value="Areasearch"><label for "Areasearch">Area dropdown</label>
+    </div>
+    <div>
+      <input type="radio" id="Location" name="searchoption" value="Location"><label for "Location">Location</label>
+    </div>
+  </div>
+  <hr>
+  <div id="maptitle">
+<h2>Name your Map</h2>
+<input type="text" id="mapname" name="mapname">
 </div>
+<hr>
+<div id="loading"><img src="Spin-1s-200px.gif" style="width:100px; height:100px; float:left; left:42%; position:relative;"></div>
+  <div id='map' style="padding-top:30px">
 
-
-      <input id="yourCSV" class="yourCSV" name="yourCSV" type="file" accept=".csv" style="width:350px;"></input>
-        <label for="yourCSV">  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
-      Choose a file...</label>
-
-    </form>
-    <!-- <button id="submit" onclick="showmap()">Submit</div> -->
-
+    <div id='keydiv'></div>
+    <div id='selectNav'>
+      <div id="postcode">
+<!--
+        <form id="pcForm">
+          <input id="pcText" class="picaarticle" type="text" tabindex="1" placeholder="e.g. NP10 8XG">
+          <button class="btn btn--primary" id="submitPost" type="submit">GO!</button>
+        </form>
+        <div id="pcError" class="picaarticle hide">Sorry, that's not a valid postcode. Try an English, Welsh or Scottish postcode eg PO15 5RR.</div>
+        <div id="successMessage" class="picaarticle hide">Sorry, we don't have data for a few areas. Unfortunately your area is one of these.</div> -->
 
   </div>
-
-
-  <div id='map'>
-    <div id='keydiv'></div>
-    <div id='selectNav'></div>
+    </div>
   </div>
   <script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-git2.min.js"></script>
 
   <script>
     d3.select("#dropdown")
       .append("select")
-      .attr('id','dropdownn')
+      .attr('id', 'dropdownn')
       .attr('name', 'areapicker')
       .selectAll("option")
-      .data(["geogLA2017GB", "geogLA2017UK", "LSOA","MSOA", "geogUKregion", "geogGBregion"])
+      .data(["geogLA2017GB", "geogLA2017UK", "LSOA", "MSOA", "geogUKregion", "geogGBregion"])
       .enter()
       .append('option')
-      .attr("class", function(d,i){return})
-      .attr("value", function(d,i){return [["geogLA2017GB", "geogLA2017UK", "LSOA","MSOA", "geogUKregion", "geogGBregion"][i]]})
+      .attr("class", function(d, i) {
+        return
+      })
+      .attr("value", function(d, i) {
+        return [
+          ["geogLA2017GB", "geogLA2017UK", "LSOA", "MSOA", "geogUKregion", "geogGBregion"][i]
+        ]
+      })
       // .property("selected", function(d, i) {return i===1;})
-      .text(function(d,i){return ["1. Local Authority (GB)", "2. Local Authority (UK)","3. LSOA", "4. MSOA", "5. Regions (UK)", "6. Regions (GB)"][i]});
+      .text(function(d, i) {
+        return ["1. Local Authority (GB)", "2. Local Authority (UK)", "3. LSOA", "4. MSOA", "5. Regions (UK)", "6. Regions (GB)"][i]
+      });
 
-      // var areaSelect = document.getElementById("dropdownn");
-      // areaSelect.addEventListener('change', function(){
-      //   console.log(areaText)
-      // })
-      // var areaText = areaSelect.options[areaSelect.selectedIndex].value;
-
-      // d3.select("#dropdownn").on("change", change)
-      // function change() {
-      //    var geog = this.options[this.selectedIndex].text
-      //    console.log(this.options[this.selectedIndex].text)
-      //    console.log(geog)
-      // }
+    $("#submitPost").click(function(event) {
 
 
+      event.preventDefault();
 
 
-// console.log(areaText)
+      event.stopPropagation();
+
+
+      myValue = $("#pcText").val();
+      getCodes(myValue);
+
+
+    });
+
+    function getCodes(myPC) {
+      var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
+
+
+      $.support.cors = true;
+
+
+      $.ajax({
+
+
+        type: "GET",
+
+
+        crossDomain: true,
+
+
+        dataType: "jsonp",
+
+
+        url: myURIstring,
+
+
+        error: function(xhr, ajaxOptions, thrownError) {
+
+
+          $("#pcError").text("couldn't process this request").show();
+
+
+        },
+
+
+        success: function(data1) {
+
+
+          if (data1.status == 200) {
+
+
+            $("#pcError").hide();
+            console.log(data1);
+            district = "Local Authority"
+
+
+            area_district_cd = data1.result.codes.admin_district;
+
+
+            area_district = data1.result.admin_district;
+
+            region = "Region"
+
+
+            area_region = data1.result.region;
+            LSOA = "Lower Super Output Area (LSOA)"
+
+
+            area_lsoa = data1.result.lsoa;
+            MSOA = "Middle Super Output Area (MSOA)"
+
+
+            area_msoa = data1.result.msoa;
+            var codes = [
+              [district, area_district_cd, area_district],
+              [region, '', area_region],
+              [LSOA, '', area_lsoa],
+              [MSOA, '', area_msoa],
+            ];
+
+            //$("#successMessage").text("The postcode " + myPC + " is situated in " + areaName + " which has an area code of " + area).show();
+
+
+          } else {
+
+
+            $("#successMessage").hide();
+
+
+            d3.select("#pcError").classed("show", true).text("Not a valid postcode I'm afraid");
+            codes = [];
+
+
+            buildTable(codes);
+
+
+          }
+
+
+        }
+
+      });
+
+    }
+
+    // console.log(areaText)
   </script>
   <script src="js/topojson.v2.min.js"></script>
   <script src="js/simple-statistics.min.js"></script>
