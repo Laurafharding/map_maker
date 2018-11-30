@@ -127,7 +127,7 @@ console.log($("#mapname").val())
 			breaks = [];
 
 			ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
-				if(i<dvc.numberBreaks-1) {
+				if(i<config.ons.numberBreaks-1) {
 					breaks.push(cluster[0]);
 				} else {
 					breaks.push(cluster[0])
@@ -144,17 +144,17 @@ console.log($("#mapname").val())
 
 		//round breaks to specified decimal places
 		breaks = breaks.map(function(each_element){
-			return Number(each_element.toFixed(dvc.legenddecimals));
+			return Number(each_element.toFixed(config.ons.legenddecimals));
 		});
 
 		//work out halfway point (for no data position)
-		midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0])/2)
+		midpoint = breaks[0] + ((breaks[config.ons.numberBreaks] - breaks[0])/2)
 
 		//Load colours
 		if(typeof dvc.varcolour === 'string') {
-			colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
+			colour = colorbrewer[config.ons.varcolour][config.ons.numberBreaks];
 		} else {
-			colour = dvc.varcolour;
+			colour = config.ons.varcolour;
 		}
 
 		//set up d3 color scales
@@ -425,7 +425,8 @@ console.log($("#mapname").val())
 				.append("svg")
 				.attr("id", "key")
 				.attr("width", keywidth)
-				.attr("height",65);
+				.attr("height",65)
+				.style("padding-top", "30px");
 
 
 			var color = d3.scaleThreshold()
@@ -520,10 +521,15 @@ console.log($("#mapname").val())
 						if(i % 2){return "translate(0,10)"} }
 				);
 			}
-			//Temporary	hardcode unit text
-			dvc.unittext = "change in life expectancy";
+			// //Temporary	hardcode unit text
+			// dvc.unittext = "change in life expectancy";
 
-			d3.select("#keydiv").append("p").attr("id","keyunit").style("margin-top","-10px").style("margin-left","10px").text(dvc.varunit);
+			d3.select("#keydiv")
+				.append("p")
+				.attr("id","keyunit")
+				.style("margin-top","-10px")
+				.style("margin-left","10px")
+				.text(dvc.varunit);
 
 	} // Ends create key
 

@@ -265,7 +265,7 @@ input[type=text]{
 </div>
 <hr>
 <div id="loading"><img src="Spin-1s-200px.gif" style="width:100px; height:100px; float:left; left:42%; position:relative;"></div>
-  <div id='map' style="padding-top:30px">
+  <div id='map' style="padding-top:30px; margin-bottom:50px;">
 
     <div id='keydiv'></div>
     <div id='selectNav'>
@@ -325,61 +325,27 @@ input[type=text]{
     function getCodes(myPC) {
       var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
 
-
       $.support.cors = true;
-
-
       $.ajax({
-
-
-        type: "GET",
-
-
+      type: "GET",
         crossDomain: true,
-
-
         dataType: "jsonp",
-
-
         url: myURIstring,
-
-
         error: function(xhr, ajaxOptions, thrownError) {
-
-
           $("#pcError").text("couldn't process this request").show();
-
-
         },
-
-
         success: function(data1) {
-
-
           if (data1.status == 200) {
-
-
             $("#pcError").hide();
             console.log(data1);
             district = "Local Authority"
-
-
             area_district_cd = data1.result.codes.admin_district;
-
-
             area_district = data1.result.admin_district;
-
             region = "Region"
-
-
             area_region = data1.result.region;
             LSOA = "Lower Super Output Area (LSOA)"
-
-
             area_lsoa = data1.result.lsoa;
             MSOA = "Middle Super Output Area (MSOA)"
-
-
             area_msoa = data1.result.msoa;
             var codes = [
               [district, area_district_cd, area_district],
@@ -387,28 +353,14 @@ input[type=text]{
               [LSOA, '', area_lsoa],
               [MSOA, '', area_msoa],
             ];
-
             //$("#successMessage").text("The postcode " + myPC + " is situated in " + areaName + " which has an area code of " + area).show();
-
-
           } else {
-
-
             $("#successMessage").hide();
-
-
             d3.select("#pcError").classed("show", true).text("Not a valid postcode I'm afraid");
             codes = [];
-
-
             buildTable(codes);
-
-
           }
-
-
         }
-
       });
 
     }
