@@ -31,12 +31,14 @@ width:100%
 }
 
 		#pcText {
-			width: 130px;
+			width: 160px;
 			height:44px;
-			padding: 3px;
+
 			color: #999999;
 		}
-
+#pcForm{
+  border-radius: 0;
+}
 		.picaarticle {
 			font-size:18px;
 			line-height:24px;
@@ -49,27 +51,30 @@ width:100%
 	}
 
 	.btn--primary {
-		background-color: #0F8243;
+		background-color: #0075A3;
 		color: #fff;
 	}
 
 	.btn {
-		font-family: "Open Sans",Helvetica,Arial,sans-serif;
-		font-weight: 400;
-		font-size: 14px;
-		display: inline-block;
-		width: auto;
-		cursor: pointer;
-		padding: 6px 16px 10px 16px;
-		border: 0 none;
-		text-align: center;
-		-webkit-appearance: none;
-		transition: background-color 0.25s ease-out;
-		text-decoration: none;
-		line-height: 24px;
-		height: 44px;
-		margin-top: -6px;
-		border-radius:0px;
+        font-family: "Open Sans",Helvetica,Arial,sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        display: inline-block;
+        width: auto;
+        cursor: pointer;
+        padding: 2px 16px 0px 16px;
+        border: 0 none;
+        text-align: center;
+        -webkit-appearance: none;
+        transition: background-color 0.25s ease-out;
+        text-decoration: none;
+        line-height: 24px;
+        height: 44px;
+        /* margin-top: 3px; */
+        border-radius: 0px;
+        border: 2px solid #0075A3;
+
+
 	}
 
 
@@ -92,11 +97,12 @@ display: none;
 }
 
 #selectNav {
+
   position:relative;
   top:0px;
   left:0px;
   width:30%;
-  height:40px;
+  height:60px;
   /* background-color:rgba(255,255,255,0.8); */
   z-index:1;
 }
@@ -144,7 +150,7 @@ display: none;
 
 #keydiv {
   position:absolute;
-  top:-80px;
+  /* top:80px; */
   left:0px;
   width:100%;
   height:80px;
@@ -208,7 +214,7 @@ input[type=text]:focus{
 }
 input[type=text]{
   border:2px solid #0075A3;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   width: 304px;
   height:50px;
   padding: 12px 20px;
@@ -216,7 +222,9 @@ input[type=text]{
   box-sizing: border-box;
   font-size:17px;
 }
-
+#mapname{
+  border-radius: 5px;
+}
   </style>
 </head>
 
@@ -269,21 +277,11 @@ input[type=text]{
 
     <div id='keydiv'></div>
     <div id='selectNav'>
-      <div id="postcode">
-<!--
-        <form id="pcForm">
-          <input id="pcText" class="picaarticle" type="text" tabindex="1" placeholder="e.g. NP10 8XG">
-          <button class="btn btn--primary" id="submitPost" type="submit">GO!</button>
-        </form>
-        <div id="pcError" class="picaarticle hide">Sorry, that's not a valid postcode. Try an English, Welsh or Scottish postcode eg PO15 5RR.</div>
-        <div id="successMessage" class="picaarticle hide">Sorry, we don't have data for a few areas. Unfortunately your area is one of these.</div> -->
 
-  </div>
     </div>
   </div>
   <script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
 
-  <script src="https://code.jquery.com/jquery-git2.min.js"></script>
 
   <script>
     d3.select("#dropdown")
@@ -307,63 +305,9 @@ input[type=text]{
         return ["1. Local Authority (GB)", "2. Local Authority (UK)", "3. LSOA", "4. MSOA", "5. Regions (UK)", "6. Regions (GB)"][i]
       });
 
-    $("#submitPost").click(function(event) {
 
 
-      event.preventDefault();
 
-
-      event.stopPropagation();
-
-
-      myValue = $("#pcText").val();
-      getCodes(myValue);
-
-
-    });
-
-    function getCodes(myPC) {
-      var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
-
-      $.support.cors = true;
-      $.ajax({
-      type: "GET",
-        crossDomain: true,
-        dataType: "jsonp",
-        url: myURIstring,
-        error: function(xhr, ajaxOptions, thrownError) {
-          $("#pcError").text("couldn't process this request").show();
-        },
-        success: function(data1) {
-          if (data1.status == 200) {
-            $("#pcError").hide();
-            console.log(data1);
-            district = "Local Authority"
-            area_district_cd = data1.result.codes.admin_district;
-            area_district = data1.result.admin_district;
-            region = "Region"
-            area_region = data1.result.region;
-            LSOA = "Lower Super Output Area (LSOA)"
-            area_lsoa = data1.result.lsoa;
-            MSOA = "Middle Super Output Area (MSOA)"
-            area_msoa = data1.result.msoa;
-            var codes = [
-              [district, area_district_cd, area_district],
-              [region, '', area_region],
-              [LSOA, '', area_lsoa],
-              [MSOA, '', area_msoa],
-            ];
-            //$("#successMessage").text("The postcode " + myPC + " is situated in " + areaName + " which has an area code of " + area).show();
-          } else {
-            $("#successMessage").hide();
-            d3.select("#pcError").classed("show", true).text("Not a valid postcode I'm afraid");
-            codes = [];
-            buildTable(codes);
-          }
-        }
-      });
-
-    }
 
     // console.log(areaText)
   </script>
@@ -376,6 +320,7 @@ input[type=text]{
   <script src="js/chosen.jquery.js"></script>
   <script src="js/limit.js"></script>
   <script src="https://cdn.ons.gov.uk/vendor/pym/0.4.2/pym.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-git2.min.js"></script> -->
 
   <script src='js/mapbox-gl.js'></script>
   <script src='js/turf.min.js'></script>

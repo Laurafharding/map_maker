@@ -47,7 +47,7 @@ if(Modernizr.webgl) {
 
 
 	function ready (error, data, config, geog){
- d3.select("#loading").remove();
+		d3.select("#loading").remove();
 		//Set up global variables
 		dvc = config.ons;
 		oldAREACD = "";
@@ -419,13 +419,13 @@ console.log($("#mapname").val())
 
 		function createKey(config){
 
-			keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
+			keywidth = d3.select("#keydiv").node().getBoundingClientRect().width+80;
 
 			var svgkey = d3.select("#keydiv")
 				.append("svg")
 				.attr("id", "key")
 				.attr("width", keywidth)
-				.attr("height",65)
+				.attr("height",85)
 				.style("padding-top", "30px");
 
 
@@ -518,7 +518,7 @@ console.log($("#mapname").val())
 			if(dvc.dropticks) {
 				d3.select("#horiz").selectAll("text").attr("transform",function(d,i){
 						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
-						if(i % 2){return "translate(0,10)"} }
+						if(i % 2){return "translate(0,15)"} }
 				);
 			}
 			// //Temporary	hardcode unit text
@@ -527,7 +527,7 @@ console.log($("#mapname").val())
 			d3.select("#keydiv")
 				.append("p")
 				.attr("id","keyunit")
-				.style("margin-top","-10px")
+				.style("margin-top","-5px")
 				.style("margin-left","10px")
 				.text(dvc.varunit);
 
@@ -608,29 +608,7 @@ console.log($("#mapname").val())
 
 
 	};
-	//postcodes
 
-	function getCodes(myPC) {
-    var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
-    $.support.cors = true;
-    $.ajax({
-      type: "GET",
-      crossDomain: true,
-      dataType: "jsonp",
-      url: myURIstring,
-      error: function(xhr, ajaxOptions, thrownError) {},
-      success: function(data1) {
-        if (data1.status == 200) {
-          var laCode = data1.result.codes.admin_district;
-          var laName = data1.result.admin_district;
-          drawGraphic(laCode, laName)
-        } else {
-          $("#pcText").val("Sorry, invalid postcode.");
-        }
-      }
-    });
-  }
-	//end of postcodes
 
 
 		function selectlist(datacsv) {
@@ -639,6 +617,105 @@ console.log($("#mapname").val())
 			var areanames =  datacsv.map(function(d) { return d.AREANM; });
 			var menuarea = d3.zip(areanames,areacodes).sort(function(a, b){ return d3.ascending(a[0], b[0]); });
 
+d3.select("#searchoptions").select("#Postcode")
+if(document.getElementById('Postcode').checked) {
+	d3.select("#selectNav")
+		.append("form")
+		.attr("id", "pcForm")
+		.append("input")
+		.attr("id", "pcText")
+		.attr("class", "picaarticle")
+		.attr("type", "text")
+		.attr("placeholder", "e.g NP10 8XG")
+		d3.select("#pcForm")
+		.append("button")
+		.style("display", "inline-block")
+		.attr("class", "btn btn--primary")
+		.attr("id", "sumbitPost")
+		.attr("type","button")
+		.text("Go")
+		.on("click", function( event){
+			// event.preventDefault();
+			// event.stopPropagation();
+			myValue=$("#pcText").val();
+
+			getCodes(myValue);
+		});
+
+		function getCodes(myPC){
+			console.log(myPC);
+
+			var myURIstring=encodeURI("https://api.postcodes.io/postcodes/"+myPC);
+                    $.support.cors = true;
+                    $.ajax({
+                        type: "GET",
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        url: myURIstring,
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(thrownError);
+                                //$("#pcError").text("couldn't process this request").show();
+
+                            },
+                        success: function(data1){
+                            if(data1.status == 200 ){
+                                console.log(data1);
+                                //$("#pcError").hide();
+                                lat =data1.result.latitude;
+                                lng = data1.result.longitude;
+
+                                success(lat,lng)
+                                //$("#successMessage").text("The postcode " + myPC + " is situated in " + areaName + " which has an area code of " + area).show();
+                            } else {
+                      //$("#successMessage").hide();
+                                //$("#pcError").text("Not a valid postcode I'm afraid").show();
+                            }
+                        }
+
+                    });
+
+                }
+								function success(lat,lng) {
+
+          //go on to filter
+
+            map.flyTo({center:[lng,lat], zoom:10, speed:0.7})
+
+            map.on('flystart', function(){
+                flying=true;
+            });
+
+            map.on('flyend', function(){
+                flying=false;
+            });
+
+            map.on('moveend',function(e){
+
+                        setTimeout(function() {
+                        //Translate lng lat coords to point on screen
+                        point = map.project([lng,lat]);
+                        //then check what features are underneath
+                        var features = map.queryRenderedFeatures(point);
+
+                        console.log(features)
+
+                        //then select area
+                        //disableMouseEvents();
+
+                        map.setFilter("OApointshover", ["==", "oa11cd", features[0].properties.id]);
+                    },500)
+
+            });
+
+
+        };
+		};
+
+
+
+
+d3.select("#searchoptions").select("#Areasearch")
+if(document.getElementById('Areasearch').checked) {
 			// Build option menu for occupations
 			var optns = d3.select("#selectNav").append("div").attr("id","sel").append("select")
 				.attr("id","areaselect")
@@ -686,7 +763,7 @@ console.log($("#mapname").val())
 	};
 
 	}
-
+}
 } else {
 
 	//provide fallback for browsers that don't support webGL
