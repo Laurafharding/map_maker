@@ -62,6 +62,9 @@ if(Modernizr.webgl) {
 
 		}
 
+
+
+
 		//set title of page
 		//Need to test that this shows up in GA
 		mapTitle = $("#mapname").val();
@@ -123,7 +126,8 @@ console.log($("#mapname").val())
 		//Flatten data values and work out breaks
 		var values =  data.map(function(d) { return +eval("d." + dvc.varname); }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
 
-		if(config.ons.breaks =="jenks") {
+		d3.select("#keydeets")
+		if(document.getElementById('Jenks').checked) {
 			breaks = [];
 
 			ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
@@ -136,7 +140,7 @@ console.log($("#mapname").val())
 				}
 			});
 		}
-		else if (config.ons.breaks == "equal") {
+		else if (document.getElementById('Equal').checked) {
 			breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
 		}
 		else {breaks = config.ons.breaks;};
@@ -523,13 +527,14 @@ console.log($("#mapname").val())
 			}
 			// //Temporary	hardcode unit text
 			// dvc.unittext = "change in life expectancy";
+			keyunit= $("#keydetails").val();
 
 			d3.select("#keydiv")
 				.append("p")
 				.attr("id","keyunit")
 				.style("margin-top","-5px")
 				.style("margin-left","10px")
-				.text(dvc.varunit);
+				.text(keyunit);
 
 	} // Ends create key
 

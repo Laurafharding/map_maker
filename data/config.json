@@ -3,10 +3,10 @@
 "varcolour": "PuBu",
 "varlabels": ["LA", "LSOA","MSOA", "Regions"],
 "varload":2,
-"varunit": "hello",
+"varunit": "",
 "displaydecimals": 0,
 "legenddecimals": 0,
-"breaks": "jenks",
+"breaks": "",
 "dropticks": false,
 "numberBreaks": 5
 }}
