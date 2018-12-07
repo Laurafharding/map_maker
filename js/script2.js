@@ -29,8 +29,17 @@ d3.select("#yourCSV")
 	 values = [];
 
  })
+ d3.select("#startover")
+ .append("button")
+ .attr("class", "btn btn--primary")
+ .attr("id", "startoverbtn")
+ .attr("type","button")
+ .text("Start over")
+ .on("click", function(){
+	 location.reload();
+ })
 
-//test if browser supports webGL
+// //test if browser supports webGL
 
 if(Modernizr.webgl) {
 
@@ -716,9 +725,6 @@ if(document.getElementById('Postcode').checked) {
         };
 		};
 
-
-
-
 d3.select("#searchoptions").select("#Areasearch")
 if(document.getElementById('Areasearch').checked) {
 			// Build option menu for occupations
@@ -766,6 +772,7 @@ if(document.getElementById('Areasearch').checked) {
 			});
 
 	};
+
 
 	}
 }
